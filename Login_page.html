@@ -24,6 +24,8 @@
       --primary-hover: #1d4ed8;
       --primary-soft: #eff6ff;
       --primary-border: #bfdbfe;
+      --success: #059669;
+      --success-soft: #ecfdf5;
       --danger: #dc2626;
       --danger-soft: #fef2f2;
       --danger-border: #fecaca;
@@ -61,8 +63,17 @@
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
       width: 100%;
-      max-width: 540px;
+      max-width: 560px;
       padding: 28px 26px;
+    }
+
+    .top-badges {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
     }
 
     .brand-badge {
@@ -76,7 +87,22 @@
       border: 1px solid var(--primary-border);
       padding: 4px 10px;
       border-radius: 999px;
-      margin-bottom: 12px;
+    }
+
+    .sync-badge {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--bg-muted);
+      border: 1px solid var(--border-color);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .sync-badge.connected {
+      color: var(--success);
+      background: var(--success-soft);
+      border-color: #a7f3d0;
     }
 
     .brand-dot {
@@ -110,10 +136,17 @@
       display: none;
     }
 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 12px;
+    .selected-user-box {
+      background: var(--primary-soft);
+      border: 1px solid var(--primary-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13.5px;
     }
 
     .form-group {
@@ -149,6 +182,7 @@
       letter-spacing: 0.35em;
       font-weight: 700;
       text-align: center;
+      font-size: 18px;
     }
 
     .btn {
@@ -177,9 +211,9 @@
     }
 
     .quick-emp-section {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px dashed var(--border-color);
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px dashed var(--border-color);
     }
 
     .quick-emp-grid {
@@ -194,7 +228,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      padding: 8px 10px;
+      padding: 9px 11px;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       background: var(--bg-muted);
@@ -215,7 +249,8 @@
     .quick-emp-btn.selected {
       border-color: var(--primary);
       background: var(--primary-soft);
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+      font-weight: 600;
     }
 
     .quick-emp-id {
@@ -227,7 +262,7 @@
     .pin-hint {
       font-size: 12px;
       color: var(--text-muted);
-      margin-top: 12px;
+      margin-top: 14px;
       background: var(--bg-muted);
       padding: 8px 12px;
       border-radius: var(--radius-sm);
@@ -238,9 +273,6 @@
       .form-control {
         font-size: 16px;
       }
-      .form-row {
-        grid-template-columns: 1fr;
-      }
     }
 
     @media (max-width: 480px) {
@@ -249,7 +281,7 @@
         align-items: flex-start;
       }
       .login-card {
-        padding: 22px 18px;
+        padding: 20px 16px;
       }
       .quick-emp-grid {
         grid-template-columns: 1fr;
@@ -260,110 +292,139 @@
 <body>
   <section class="login-screen">
     <div class="login-card">
-      <div class="brand-badge">
-        <span class="brand-dot"></span>
-        QA Pre-Work Portal
+      <div class="top-badges">
+        <div class="brand-badge">
+          <span class="brand-dot"></span>
+          QA Pre-Work Portal
+        </div>
+        <span class="sync-badge" id="syncStatusBadge">โหมดออฟไลน์ (Local)</span>
       </div>
-      <h1 class="login-title">เข้าสู่ระบบด้วยรหัสพนักงาน &amp; PIN</h1>
+
+      <h1 class="login-title">เลือกชื่อผู้ใช้งาน &amp; กรอก PIN</h1>
       <p class="login-subtitle">
-        เลือกรายชื่อผู้ใช้งานด้านล่างหรือกรอกรหัสพนักงาน จากนั้นใส่รหัส PIN 4 หลักเพื่อเข้าสู่ระบบ
+        กดเลือกรายชื่อของคุณด้านล่าง แล้วกรอกรหัส PIN 4 หลัก (พนักงานใช้รหัสพนักงาน 1001–1010 เป็น PIN)
       </p>
+
+      <!-- Step 1: กดเลือกรายชื่อ -->
+      <div class="quick-emp-section">
+        <div class="form-label" style="color: var(--primary);">ผู้ดูแลระบบ (Admin 2 คน)</div>
+        <div class="quick-emp-grid" id="quickAdminGrid" style="margin-bottom: 14px;"></div>
+
+        <div class="form-label">พนักงาน QA (10 คน — รหัส 1001 ถึง 1010)</div>
+        <div class="quick-emp-grid" id="quickEmpGrid"></div>
+      </div>
 
       <div id="loginError" class="login-error"></div>
 
+      <!-- Step 2: กรอก PIN 4 หลัก -->
       <form onsubmit="handleLoginSubmit(event)">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="loginEmpIdInput">รหัสผู้ใช้งาน</label>
-            <input
-              type="text"
-              id="loginEmpIdInput"
-              class="form-control"
-              placeholder="เช่น ADM-001 หรือ QA-001"
-              autocomplete="off"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="loginPinInput">รหัส PIN (4 หลัก)</label>
-            <input
-              type="password"
-              id="loginPinInput"
-              class="form-control pin-input"
-              placeholder="••••"
-              maxlength="4"
-              inputmode="numeric"
-              pattern="\d{4}"
-              autocomplete="off"
-              required
-            />
-          </div>
+        <div class="selected-user-box" id="selectedUserBox" style="display: none;">
+          <span>ผู้ใช้งานที่เลือก: <strong id="selectedUserLabel">-</strong></span>
+          <span class="quick-emp-id" id="selectedUserIdBadge">-</span>
         </div>
 
-        <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+        <div class="form-group">
+          <label class="form-label" for="loginPinInput">รหัส PIN 4 หลัก (สำหรับพนักงานคือรหัสพนักงาน 1001–1010)</label>
+          <input
+            type="password"
+            id="loginPinInput"
+            class="form-control pin-input"
+            placeholder="••••"
+            maxlength="4"
+            inputmode="numeric"
+            pattern="\d{4}"
+            autocomplete="off"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">เข้าสู่ระบบ (Main Menu)</button>
       </form>
 
-      <div class="quick-emp-section">
-        <div class="form-label" style="color: var(--primary);">ผู้ดูแลระบบ (Admin 2 คน — เข้าได้ทุกเมนู &amp; จัดการ PIN ทุกคน)</div>
-        <div class="quick-emp-grid" id="quickAdminGrid" style="margin-bottom: 14px;"></div>
-
-        <div class="form-label">พนักงาน QA (10 คน — ทำแบบทดสอบที่ได้รับแจกจ่าย)</div>
-        <div class="quick-emp-grid" id="quickEmpGrid"></div>
-
-        <div class="pin-hint">
-          <strong>PIN เริ่มต้นสำหรับทดสอบ:</strong> Admin: <code>1111</code> (ADM-001), <code>2222</code> (ADM-002) |
-          พนักงาน: <code>0001</code>–<code>0010</code> (ตามเลขรหัส เช่น QA-001 ใช้ <code>0001</code>) — สามารถเปลี่ยน PIN ได้หลังเข้าสู่ระบบ
-        </div>
+      <div class="pin-hint">
+        <strong>PIN เริ่มต้น:</strong> พนักงานใช้รหัสพนักงานตัวเอง (<code>1001</code>–<code>1010</code>) |
+        Admin: <code>1111</code> (ADM-001), <code>2222</code> (ADM-002)
       </div>
     </div>
   </section>
 
   <script>
+    // =========================================================================
+    // วาง Web App URL จาก Google Apps Script ที่นี่ (ถ้ายังไม่ใส่ จะใช้ข้อมูลจำลองในเครื่อง)
+    // =========================================================================
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6pyDiqm71DQ9uoZ7zqFpkcTeUWfgYtJUPEgUaIiUdemDA_OV-XgZ6biHlPEcsfYUBig/exec';
+
     const STORAGE_KEY_CURRENT_EMP = 'qa_current_emp_v1';
     const STORAGE_KEY_PINS = 'qa_user_pins_v1';
+    const STORAGE_KEY_USERS_CACHE = 'qa_users_cache_v1';
 
-    const ADMINS = [
-      { empId: 'ADM-001', name: 'ศิริพร วรโชติ', defaultPin: '1111' },
-      { empId: 'ADM-002', name: 'ชัยวัฒน์ เกรียงไกร', defaultPin: '2222' },
+    const DEFAULT_USERS = [
+      { empId: 'ADM-001', name: 'ศิริพร วรโชติ', initials: 'ศว', position: 'QA Supervisor (Admin)', department: 'QA Management', role: 'admin', pin: '1111' },
+      { empId: 'ADM-002', name: 'ชัยวัฒน์ เกรียงไกร', initials: 'ชก', position: 'QA Lead (Admin)', department: 'QA Management', role: 'admin', pin: '2222' },
+      { empId: '1001', name: 'กัญญารัตน์ ใจดี', initials: 'กจ', position: 'QA Inspector', department: 'Incoming QA', role: 'employee', pin: '1001' },
+      { empId: '1002', name: 'ธนากร สุขสันต์', initials: 'ธส', position: 'QA Inspector', department: 'Line QA (ไลน์ 1)', role: 'employee', pin: '1002' },
+      { empId: '1003', name: 'พิมพ์ชนก รักงาน', initials: 'พร', position: 'QA Inspector', department: 'Line QA (ไลน์ 2)', role: 'employee', pin: '1003' },
+      { empId: '1004', name: 'ณัฐวุฒิ มั่นคง', initials: 'ณม', position: 'Senior QA', department: 'Final Inspection', role: 'employee', pin: '1004' },
+      { empId: '1005', name: 'วราภรณ์ แสงทอง', initials: 'วส', position: 'QA Inspector', department: 'Incoming QA', role: 'employee', pin: '1005' },
+      { empId: '1006', name: 'ศุภชัย พงษ์พานิช', initials: 'ศพ', position: 'QA Inspector', department: 'Packaging QA', role: 'employee', pin: '1006' },
+      { empId: '1007', name: 'อรทัย วิริยะ', initials: 'อว', position: 'QA Inspector', department: 'Line QA (ไลน์ 1)', role: 'employee', pin: '1007' },
+      { empId: '1008', name: 'ปิยะพงษ์ เจริญสุข', initials: 'ปจ', position: 'QA Inspector', department: 'Final Inspection', role: 'employee', pin: '1008' },
+      { empId: '1009', name: 'ชุติมา นิลมณี', initials: 'ชน', position: 'QA Inspector', department: 'Packaging QA', role: 'employee', pin: '1009' },
+      { empId: '1010', name: 'เอกราช บุญมี', initials: 'อบ', position: 'QA Technician', department: 'Lab & Calibration', role: 'employee', pin: '1010' },
     ];
 
-    const EMPLOYEES = [
-      { empId: 'QA-001', name: 'กัญญารัตน์ ใจดี', defaultPin: '0001' },
-      { empId: 'QA-002', name: 'ธนากร สุขสันต์', defaultPin: '0002' },
-      { empId: 'QA-003', name: 'พิมพ์ชนก รักงาน', defaultPin: '0003' },
-      { empId: 'QA-004', name: 'ณัฐวุฒิ มั่นคง', defaultPin: '0004' },
-      { empId: 'QA-005', name: 'วราภรณ์ แสงทอง', defaultPin: '0005' },
-      { empId: 'QA-006', name: 'ศุภชัย พงษ์พานิช', defaultPin: '0006' },
-      { empId: 'QA-007', name: 'อรทัย วิริยะ', defaultPin: '0007' },
-      { empId: 'QA-008', name: 'ปิยะพงษ์ เจริญสุข', defaultPin: '0008' },
-      { empId: 'QA-009', name: 'ชุติมา นิลมณี', defaultPin: '0009' },
-      { empId: 'QA-010', name: 'เอกราช บุญมี', defaultPin: '0010' },
-    ];
+    let allUsers = [...DEFAULT_USERS];
+    let selectedEmpId = '';
 
-    const ALL_USERS = [...ADMINS, ...EMPLOYEES];
-
-    function loadUserPins() {
+    function loadLocalPins() {
       const defaults = {};
-      ALL_USERS.forEach((u) => {
-        defaults[u.empId] = u.defaultPin;
+      allUsers.forEach((u) => {
+        defaults[u.empId] = u.pin;
       });
       try {
         const raw = localStorage.getItem(STORAGE_KEY_PINS);
-        if (!raw) {
-          localStorage.setItem(STORAGE_KEY_PINS, JSON.stringify(defaults));
-          return defaults;
-        }
-        return { ...defaults, ...JSON.parse(raw) };
+        return raw ? { ...defaults, ...JSON.parse(raw) } : defaults;
       } catch {
         return defaults;
       }
     }
 
-    let selectedEmpId = '';
+    async function syncUsersFromGoogleSheet() {
+      const badge = document.getElementById('syncStatusBadge');
+      if (!APPS_SCRIPT_URL) {
+        badge.textContent = 'โหมดออฟไลน์ (Local)';
+        renderQuickLoginButtons();
+        return;
+      }
+
+      badge.textContent = 'กำลังดึงรายชื่อจาก Google Sheets...';
+      try {
+        const res = await fetch(`${APPS_SCRIPT_URL}?action=getUsers`);
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.users) && data.users.length > 0) {
+          allUsers = data.users;
+          localStorage.setItem(STORAGE_KEY_USERS_CACHE, JSON.stringify(allUsers));
+
+          const pinMap = {};
+          allUsers.forEach((u) => {
+            pinMap[u.empId] = u.pin || u.empId;
+          });
+          localStorage.setItem(STORAGE_KEY_PINS, JSON.stringify(pinMap));
+
+          badge.textContent = 'เชื่อมต่อ Google Sheets แล้ว';
+          badge.classList.add('connected');
+        }
+      } catch (err) {
+        badge.textContent = 'ซิงค์ไม่สำเร็จ (ใช้ข้อมูลแคช)';
+      }
+      renderQuickLoginButtons();
+    }
 
     function renderQuickLoginButtons() {
-      document.getElementById('quickAdminGrid').innerHTML = ADMINS.map(
+      const admins = allUsers.filter((u) => u.role === 'admin');
+      const employees = allUsers.filter((u) => u.role !== 'admin');
+
+      document.getElementById('quickAdminGrid').innerHTML = admins.map(
         (adm) => `
           <button
             type="button"
@@ -377,7 +438,7 @@
         `
       ).join('');
 
-      document.getElementById('quickEmpGrid').innerHTML = EMPLOYEES.map(
+      document.getElementById('quickEmpGrid').innerHTML = employees.map(
         (emp) => `
           <button
             type="button"
@@ -392,9 +453,15 @@
     }
 
     function selectUser(empId) {
+      const user = allUsers.find((u) => u.empId === empId);
+      if (!user) return;
+
       selectedEmpId = empId;
-      document.getElementById('loginEmpIdInput').value = empId;
+      document.getElementById('selectedUserBox').style.display = 'flex';
+      document.getElementById('selectedUserLabel').textContent = user.name;
+      document.getElementById('selectedUserIdBadge').textContent = user.empId;
       document.getElementById('loginError').style.display = 'none';
+
       renderQuickLoginButtons();
       const pinInput = document.getElementById('loginPinInput');
       pinInput.value = '';
@@ -403,13 +470,18 @@
 
     function handleLoginSubmit(event) {
       event.preventDefault();
-      const empIdVal = document.getElementById('loginEmpIdInput').value.trim().toUpperCase();
       const pinVal = document.getElementById('loginPinInput').value.trim();
       const errBox = document.getElementById('loginError');
 
-      const found = ALL_USERS.find((u) => u.empId.toUpperCase() === empIdVal);
+      if (!selectedEmpId) {
+        errBox.textContent = 'กรุณากดเลือกรายชื่อผู้ใช้งานด้านบนก่อนกรอกรหัส PIN';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      const found = allUsers.find((u) => u.empId === selectedEmpId);
       if (!found) {
-        errBox.textContent = 'ไม่พบรหัสผู้ใช้งานนี้ในระบบ (ตัวอย่าง: ADM-001 หรือ QA-001 ถึง QA-010)';
+        errBox.textContent = 'ไม่พบข้อมูลผู้ใช้งานที่เลือก';
         errBox.style.display = 'block';
         return;
       }
@@ -420,9 +492,11 @@
         return;
       }
 
-      const userPins = loadUserPins();
-      if (userPins[found.empId] !== pinVal) {
-        errBox.textContent = `รหัส PIN สำหรับ ${found.empId} ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง`;
+      const userPins = loadLocalPins();
+      const expectedPin = found.pin && APPS_SCRIPT_URL ? found.pin : (userPins[found.empId] || found.pin);
+
+      if (expectedPin !== pinVal) {
+        errBox.textContent = `รหัส PIN สำหรับ ${found.name} (${found.empId}) ไม่ถูกต้อง`;
         errBox.style.display = 'block';
         document.getElementById('loginPinInput').value = '';
         document.getElementById('loginPinInput').focus();
@@ -431,16 +505,14 @@
 
       errBox.style.display = 'none';
       localStorage.setItem(STORAGE_KEY_CURRENT_EMP, found.empId);
-      window.location.href = `./Main_menu.html?empId=${encodeURIComponent(found.empId)}`;
+      window.location.href = `Main_menu.html?empId=${encodeURIComponent(found.empId)}`;
     }
 
-    // Allow only digits in PIN input
     document.getElementById('loginPinInput').addEventListener('input', (e) => {
       e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
     });
 
-    loadUserPins();
-    renderQuickLoginButtons();
+    syncUsersFromGoogleSheet();
   </script>
 </body>
 </html>
