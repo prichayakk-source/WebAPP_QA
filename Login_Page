@@ -1,1 +1,447 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เข้าสู่ระบบ | QA Pre-Work Assessment</title>
+
+  <!-- Google Fonts: Google Sans & Noto Sans Thai -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg-surface: #ffffff;
+      --bg-muted: #f8fafc;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --danger-border: #fecaca;
+      --border-color: #e2e8f0;
+      --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.06);
+      --radius-sm: 8px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Google Sans', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-primary);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #eff6ff 0%, #f4f6fb 60%, #eef2ff 100%);
+    }
+
+    .login-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 540px;
+      padding: 28px 26px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border: 1px solid var(--primary-border);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .brand-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .login-title {
+      font-size: 21px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .login-subtitle {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+    }
+
+    .login-error {
+      background: var(--danger-soft);
+      border: 1px solid var(--danger-border);
+      color: var(--danger);
+      font-size: 13px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      transition: border-color 0.15s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .pin-input {
+      letter-spacing: 0.35em;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .quick-emp-section {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .quick-emp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .quick-emp-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-muted);
+      font-family: inherit;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .quick-emp-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .quick-emp-btn.selected {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    .quick-emp-id {
+      font-weight: 600;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .pin-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      background: var(--bg-muted);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 768px) {
+      .form-control {
+        font-size: 16px;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-screen {
+        padding: 14px;
+        align-items: flex-start;
+      }
+      .login-card {
+        padding: 22px 18px;
+      }
+      .quick-emp-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="login-screen">
+    <div class="login-card">
+      <div class="brand-badge">
+        <span class="brand-dot"></span>
+        QA Pre-Work Portal
+      </div>
+      <h1 class="login-title">เข้าสู่ระบบด้วยรหัสพนักงาน &amp; PIN</h1>
+      <p class="login-subtitle">
+        เลือกรายชื่อผู้ใช้งานด้านล่างหรือกรอกรหัสพนักงาน จากนั้นใส่รหัส PIN 4 หลักเพื่อเข้าสู่ระบบ
+      </p>
+
+      <div id="loginError" class="login-error"></div>
+
+      <form onsubmit="handleLoginSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="loginEmpIdInput">รหัสผู้ใช้งาน</label>
+            <input
+              type="text"
+              id="loginEmpIdInput"
+              class="form-control"
+              placeholder="เช่น ADM-001 หรือ QA-001"
+              autocomplete="off"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="loginPinInput">รหัส PIN (4 หลัก)</label>
+            <input
+              type="password"
+              id="loginPinInput"
+              class="form-control pin-input"
+              placeholder="••••"
+              maxlength="4"
+              inputmode="numeric"
+              pattern="\d{4}"
+              autocomplete="off"
+              required
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+      </form>
+
+      <div class="quick-emp-section">
+        <div class="form-label" style="color: var(--primary);">ผู้ดูแลระบบ (Admin 2 คน — เข้าได้ทุกเมนู &amp; จัดการ PIN ทุกคน)</div>
+        <div class="quick-emp-grid" id="quickAdminGrid" style="margin-bottom: 14px;"></div>
+
+        <div class="form-label">พนักงาน QA (10 คน — ทำแบบทดสอบที่ได้รับแจกจ่าย)</div>
+        <div class="quick-emp-grid" id="quickEmpGrid"></div>
+
+        <div class="pin-hint">
+          <strong>PIN เริ่มต้นสำหรับทดสอบ:</strong> Admin: <code>1111</code> (ADM-001), <code>2222</code> (ADM-002) |
+          พนักงาน: <code>0001</code>–<code>0010</code> (ตามเลขรหัส เช่น QA-001 ใช้ <code>0001</code>) — สามารถเปลี่ยน PIN ได้หลังเข้าสู่ระบบ
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const STORAGE_KEY_CURRENT_EMP = 'qa_current_emp_v1';
+    const STORAGE_KEY_PINS = 'qa_user_pins_v1';
+
+    const ADMINS = [
+      { empId: 'ADM-001', name: 'ศิริพร วรโชติ', defaultPin: '1111' },
+      { empId: 'ADM-002', name: 'ชัยวัฒน์ เกรียงไกร', defaultPin: '2222' },
+    ];
+
+    const EMPLOYEES = [
+      { empId: 'QA-001', name: 'กัญญารัตน์ ใจดี', defaultPin: '0001' },
+      { empId: 'QA-002', name: 'ธนากร สุขสันต์', defaultPin: '0002' },
+      { empId: 'QA-003', name: 'พิมพ์ชนก รักงาน', defaultPin: '0003' },
+      { empId: 'QA-004', name: 'ณัฐวุฒิ มั่นคง', defaultPin: '0004' },
+      { empId: 'QA-005', name: 'วราภรณ์ แสงทอง', defaultPin: '0005' },
+      { empId: 'QA-006', name: 'ศุภชัย พงษ์พานิช', defaultPin: '0006' },
+      { empId: 'QA-007', name: 'อรทัย วิริยะ', defaultPin: '0007' },
+      { empId: 'QA-008', name: 'ปิยะพงษ์ เจริญสุข', defaultPin: '0008' },
+      { empId: 'QA-009', name: 'ชุติมา นิลมณี', defaultPin: '0009' },
+      { empId: 'QA-010', name: 'เอกราช บุญมี', defaultPin: '0010' },
+    ];
+
+    const ALL_USERS = [...ADMINS, ...EMPLOYEES];
+
+    function loadUserPins() {
+      const defaults = {};
+      ALL_USERS.forEach((u) => {
+        defaults[u.empId] = u.defaultPin;
+      });
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_PINS);
+        if (!raw) {
+          localStorage.setItem(STORAGE_KEY_PINS, JSON.stringify(defaults));
+          return defaults;
+        }
+        return { ...defaults, ...JSON.parse(raw) };
+      } catch {
+        return defaults;
+      }
+    }
+
+    let selectedEmpId = '';
+
+    function renderQuickLoginButtons() {
+      document.getElementById('quickAdminGrid').innerHTML = ADMINS.map(
+        (adm) => `
+          <button
+            type="button"
+            class="quick-emp-btn ${selectedEmpId === adm.empId ? 'selected' : ''}"
+            style="border-color: var(--primary-border); background: var(--primary-soft);"
+            onclick="selectUser('${adm.empId}')"
+          >
+            <span>${adm.name}</span>
+            <span class="quick-emp-id">${adm.empId}</span>
+          </button>
+        `
+      ).join('');
+
+      document.getElementById('quickEmpGrid').innerHTML = EMPLOYEES.map(
+        (emp) => `
+          <button
+            type="button"
+            class="quick-emp-btn ${selectedEmpId === emp.empId ? 'selected' : ''}"
+            onclick="selectUser('${emp.empId}')"
+          >
+            <span>${emp.name}</span>
+            <span class="quick-emp-id">${emp.empId}</span>
+          </button>
+        `
+      ).join('');
+    }
+
+    function selectUser(empId) {
+      selectedEmpId = empId;
+      document.getElementById('loginEmpIdInput').value = empId;
+      document.getElementById('loginError').style.display = 'none';
+      renderQuickLoginButtons();
+      const pinInput = document.getElementById('loginPinInput');
+      pinInput.value = '';
+      pinInput.focus();
+    }
+
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      const empIdVal = document.getElementById('loginEmpIdInput').value.trim().toUpperCase();
+      const pinVal = document.getElementById('loginPinInput').value.trim();
+      const errBox = document.getElementById('loginError');
+
+      const found = ALL_USERS.find((u) => u.empId.toUpperCase() === empIdVal);
+      if (!found) {
+        errBox.textContent = 'ไม่พบรหัสผู้ใช้งานนี้ในระบบ (ตัวอย่าง: ADM-001 หรือ QA-001 ถึง QA-010)';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      if (!/^\d{4}$/.test(pinVal)) {
+        errBox.textContent = 'กรุณากรอกรหัส PIN เป็นตัวเลข 4 หลัก';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      const userPins = loadUserPins();
+      if (userPins[found.empId] !== pinVal) {
+        errBox.textContent = `รหัส PIN สำหรับ ${found.empId} ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง`;
+        errBox.style.display = 'block';
+        document.getElementById('loginPinInput').value = '';
+        document.getElementById('loginPinInput').focus();
+        return;
+      }
+
+      errBox.style.display = 'none';
+      localStorage.setItem(STORAGE_KEY_CURRENT_EMP, found.empId);
+      window.location.href = `index.html?empId=${encodeURIComponent(found.empId)}`;
+    }
+
+    // Allow only digits in PIN input
+    document.getElementById('loginPinInput').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    });
+
+    loadUserPins();
+    renderQuickLoginButtons();
+  </script>
+</body>
+</html>
 
