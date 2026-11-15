@@ -1405,35 +1405,56 @@
 
   <script>
     // =========================================================================
-    // 1. รายชื่อผู้ใช้งาน: Admin 2 คน + พนักงาน QA 10 คน
+    // 0. วาง Web App URL จาก Google Apps Script ที่นี่ (ต้องตรงกับหน้า login.html)
     // =========================================================================
-    const ADMINS = [
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6pyDiqm71DQ9uoZ7zqFpkcTeUWfgYtJUPEgUaIiUdemDA_OV-XgZ6biHlPEcsfYUBig/exec';
+
+    async function postToSheet(payload) {
+      if (!APPS_SCRIPT_URL) return;
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload),
+        });
+      } catch (err) {
+        console.warn('Sync to Google Sheet failed:', err);
+      }
+    }
+
+    // =========================================================================
+    // 1. รายชื่อผู้ใช้งาน: Admin 2 คน + พนักงาน QA 10 คน (รหัส 1001-1010)
+    // =========================================================================
+    const DEFAULT_ADMINS = [
       { empId: 'ADM-001', name: 'ศิริพร วรโชติ', initials: 'ศว', position: 'QA Supervisor (Admin)', department: 'QA Management', role: 'admin', defaultPin: '1111' },
       { empId: 'ADM-002', name: 'ชัยวัฒน์ เกรียงไกร', initials: 'ชก', position: 'QA Lead (Admin)', department: 'QA Management', role: 'admin', defaultPin: '2222' },
     ];
 
-    const EMPLOYEES = [
-      { empId: 'QA-001', name: 'กัญญารัตน์ ใจดี', initials: 'กจ', position: 'QA Inspector', department: 'Incoming QA', role: 'employee', defaultPin: '0001' },
-      { empId: 'QA-002', name: 'ธนากร สุขสันต์', initials: 'ธส', position: 'QA Inspector', department: 'Line QA (ไลน์ 1)', role: 'employee', defaultPin: '0002' },
-      { empId: 'QA-003', name: 'พิมพ์ชนก รักงาน', initials: 'พร', position: 'QA Inspector', department: 'Line QA (ไลน์ 2)', role: 'employee', defaultPin: '0003' },
-      { empId: 'QA-004', name: 'ณัฐวุฒิ มั่นคง', initials: 'ณม', position: 'Senior QA', department: 'Final Inspection', role: 'employee', defaultPin: '0004' },
-      { empId: 'QA-005', name: 'วราภรณ์ แสงทอง', initials: 'วส', position: 'QA Inspector', department: 'Incoming QA', role: 'employee', defaultPin: '0005' },
-      { empId: 'QA-006', name: 'ศุภชัย พงษ์พานิช', initials: 'ศพ', position: 'QA Inspector', department: 'Packaging QA', role: 'employee', defaultPin: '0006' },
-      { empId: 'QA-007', name: 'อรทัย วิริยะ', initials: 'อว', position: 'QA Inspector', department: 'Line QA (ไลน์ 1)', role: 'employee', defaultPin: '0007' },
-      { empId: 'QA-008', name: 'ปิยะพงษ์ เจริญสุข', initials: 'ปจ', position: 'QA Inspector', department: 'Final Inspection', role: 'employee', defaultPin: '0008' },
-      { empId: 'QA-009', name: 'ชุติมา นิลมณี', initials: 'ชน', position: 'QA Inspector', department: 'Packaging QA', role: 'employee', defaultPin: '0009' },
-      { empId: 'QA-010', name: 'เอกราช บุญมี', initials: 'อบ', position: 'QA Technician', department: 'Lab & Calibration', role: 'employee', defaultPin: '0010' },
+    const DEFAULT_EMPLOYEES = [
+      { empId: '1001', name: 'กัญญารัตน์ ใจดี', initials: 'กจ', position: 'QA Inspector', department: 'Incoming QA', role: 'employee', defaultPin: '1001' },
+      { empId: '1002', name: 'ธนากร สุขสันต์', initials: 'ธส', position: 'QA Inspector', department: 'Line QA (ไลน์ 1)', role: 'employee', defaultPin: '1002' },
+      { empId: '1003', name: 'พิมพ์ชนก รักงาน', initials: 'พร', position: 'QA Inspector', department: 'Line QA (ไลน์ 2)', role: 'employee', defaultPin: '1003' },
+      { empId: '1004', name: 'ณัฐวุฒิ มั่นคง', initials: 'ณม', position: 'Senior QA', department: 'Final Inspection', role: 'employee', defaultPin: '1004' },
+      { empId: '1005', name: 'วราภรณ์ แสงทอง', initials: 'วส', position: 'QA Inspector', department: 'Incoming QA', role: 'employee', defaultPin: '1005' },
+      { empId: '1006', name: 'ศุภชัย พงษ์พานิช', initials: 'ศพ', position: 'QA Inspector', department: 'Packaging QA', role: 'employee', defaultPin: '1006' },
+      { empId: '1007', name: 'อรทัย วิริยะ', initials: 'อว', position: 'QA Inspector', department: 'Line QA (ไลน์ 1)', role: 'employee', defaultPin: '1007' },
+      { empId: '1008', name: 'ปิยะพงษ์ เจริญสุข', initials: 'ปจ', position: 'QA Inspector', department: 'Final Inspection', role: 'employee', defaultPin: '1008' },
+      { empId: '1009', name: 'ชุติมา นิลมณี', initials: 'ชน', position: 'QA Inspector', department: 'Packaging QA', role: 'employee', defaultPin: '1009' },
+      { empId: '1010', name: 'เอกราช บุญมี', initials: 'อบ', position: 'QA Technician', department: 'Lab & Calibration', role: 'employee', defaultPin: '1010' },
     ];
 
-    const ALL_USERS = [...ADMINS, ...EMPLOYEES];
+    let ADMINS = [...DEFAULT_ADMINS];
+    let EMPLOYEES = [...DEFAULT_EMPLOYEES];
+    let ALL_USERS = [...ADMINS, ...EMPLOYEES];
     const STORAGE_KEY_PINS = 'qa_user_pins_v1';
+    const STORAGE_KEY_USERS_CACHE = 'qa_users_cache_v1';
     let currentUser = null;
     let pinTargetEmpId = null;
 
     function loadUserPins() {
       const defaults = {};
       ALL_USERS.forEach((u) => {
-        defaults[u.empId] = u.defaultPin;
+        defaults[u.empId] = u.defaultPin || u.pin || u.empId;
       });
       try {
         const raw = localStorage.getItem(STORAGE_KEY_PINS);
@@ -1653,7 +1674,44 @@
     // =========================================================================
     // 3. ระบบตรวจสอบสิทธิ์ Login (เชื่อมกับ login.html) & การแสดงผลตามสิทธิ์
     // =========================================================================
-    function initApp() {
+    async function initApp() {
+      // โหลดรายชื่อจาก cache ก่อน (ถ้ามี)
+      const cachedUsers = loadStoredData(STORAGE_KEY_USERS_CACHE, null);
+      if (Array.isArray(cachedUsers) && cachedUsers.length > 0) {
+        applyUsersList(cachedUsers);
+      }
+
+      // ถ้าใส่ APPS_SCRIPT_URL ไว้ ให้ดึงข้อมูลล่าสุดจาก Google Sheets
+      if (APPS_SCRIPT_URL) {
+        try {
+          const res = await fetch(`${APPS_SCRIPT_URL}?action=getAll`);
+          const data = await res.json();
+          if (data.ok) {
+            if (Array.isArray(data.users) && data.users.length > 0) {
+              applyUsersList(data.users);
+              localStorage.setItem(STORAGE_KEY_USERS_CACHE, JSON.stringify(data.users));
+            }
+            if (data.distribution) {
+              distributionState = {
+                isPublished: Boolean(data.distribution.isPublished),
+                publishedBy: data.distribution.publishedBy || null,
+                publishedAt: data.distribution.publishedAt || null,
+                assignments: Object.keys(data.distribution.assignments || {}).length
+                  ? data.distribution.assignments
+                  : generateBalancedAssignments(),
+              };
+              saveDistribution();
+            }
+            if (data.results) {
+              employeeResults = { ...buildDefaultResults(), ...data.results };
+              saveExamResults();
+            }
+          }
+        } catch (err) {
+          console.warn('Could not sync from Google Sheet, using local cache:', err);
+        }
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       const paramEmpId = urlParams.get('empId');
       const savedEmpId = paramEmpId || localStorage.getItem(STORAGE_KEY_CURRENT_EMP);
@@ -1663,6 +1721,16 @@
       } else {
         window.location.href = 'login.html';
       }
+    }
+
+    function applyUsersList(users) {
+      ALL_USERS = users;
+      ADMINS = users.filter((u) => u.role === 'admin');
+      EMPLOYEES = users.filter((u) => u.role !== 'admin');
+      users.forEach((u) => {
+        if (u.pin) userPins[u.empId] = u.pin;
+      });
+      saveUserPins();
     }
 
     function loginAsUser(empId) {
@@ -1787,6 +1855,7 @@
       distributionState.publishedBy = `${currentUser.name} (${currentUser.empId})`;
       distributionState.publishedAt = timeStr;
       saveDistribution();
+      postToSheet({ action: 'saveDistribution', ...distributionState });
       renderAll();
     }
 
@@ -1799,6 +1868,8 @@
       saveDistribution();
       employeeResults = buildDefaultResults();
       saveExamResults();
+      postToSheet({ action: 'saveDistribution', ...distributionState });
+      postToSheet({ action: 'resetResults' });
       renderAll();
     }
 
@@ -1806,6 +1877,15 @@
       if (currentUser?.role !== 'admin') return;
       employeeResults[empId] = { status: 'pending', score: null };
       saveExamResults();
+      const emp = EMPLOYEES.find((e) => e.empId === empId);
+      postToSheet({
+        action: 'saveResult',
+        empId,
+        name: emp?.name || '',
+        examId: distributionState.assignments[empId] || '',
+        score: null,
+        status: 'pending',
+      });
       renderAll();
     }
 
@@ -1903,6 +1983,7 @@
 
       userPins[pinTargetEmpId] = newPin;
       saveUserPins();
+      postToSheet({ action: 'updatePin', empId: pinTargetEmpId, newPin });
       closeChangePinModal();
       renderAll();
       alert(`บันทึกรหัส PIN ใหม่สำหรับ ${pinTargetEmpId} เรียบร้อยแล้ว`);
@@ -1911,7 +1992,9 @@
     function resetAllPinsToDefault() {
       if (currentUser?.role !== 'admin') return;
       ALL_USERS.forEach((u) => {
-        userPins[u.empId] = u.defaultPin;
+        const defPin = u.defaultPin || u.empId;
+        userPins[u.empId] = defPin;
+        postToSheet({ action: 'updatePin', empId: u.empId, newPin: defPin });
       });
       saveUserPins();
       renderAll();
@@ -2318,6 +2401,14 @@
       ) {
         employeeResults[currentUser.empId] = resultObj;
         saveExamResults();
+        postToSheet({
+          action: 'saveResult',
+          empId: currentUser.empId,
+          name: currentUser.name,
+          examId: activeExam.id,
+          score: scorePct,
+          status: resultObj.status,
+        });
       }
 
       renderAll();
