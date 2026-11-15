@@ -1,0 +1,2544 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Pre-Work Assessment | ระบบแบบทดสอบก่อนเริ่มปฏิบัติงาน</title>
+
+  <!-- Google Fonts: Google Sans & Noto Sans Thai -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg-app: #f4f6fb;
+      --bg-surface: #ffffff;
+      --bg-sidebar: #ffffff;
+      --bg-muted: #f8fafc;
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+
+      --success: #059669;
+      --success-soft: #ecfdf5;
+      --success-border: #a7f3d0;
+
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --warning-border: #fde68a;
+
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --danger-border: #fecaca;
+
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.06);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --sidebar-width: 290px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Google Sans', 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* App Shell Layout */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Left Sidebar (Top-Left Profile + Main Menu below) */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 30;
+      transition: transform 0.25s ease;
+    }
+
+    /* Top-Left User Profile Section */
+    .profile-card {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+      background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border: 1px solid var(--primary-border);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .brand-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.22);
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .profile-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--success);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .profile-meta {
+      background: var(--bg-muted);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12.5px;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .meta-label {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .meta-value {
+      color: var(--text-primary);
+      font-weight: 500;
+      text-align: right;
+    }
+
+    /* Main Menu Section (Below Profile) */
+    .menu-section {
+      padding: 18px 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .menu-heading {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      padding: 0 10px 6px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+
+    .nav-btn:hover {
+      background: var(--bg-muted);
+      color: var(--text-primary);
+    }
+
+    .nav-btn.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: var(--primary-border);
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: var(--text-secondary);
+    }
+
+    .nav-btn.active .nav-badge {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border-color);
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Main Content Area (Right Side) */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* Top Header Bar */
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: var(--bg-muted);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      cursor: pointer;
+      color: var(--text-primary);
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .readiness-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--warning-border);
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .readiness-pill.ready {
+      border-color: var(--success-border);
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .content-container {
+      padding: 28px 32px;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .stat-note {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    /* Progress Banner */
+    .banner-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .banner-info {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .banner-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .banner-desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #059669);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background: var(--bg-surface);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-muted);
+    }
+
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: 13px;
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    /* Exam Cards Grid (4 Sets) */
+    .exam-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .exam-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .exam-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .exam-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .exam-set-tag {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-soft);
+      padding: 3px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .exam-title {
+      font-size: 16.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .exam-desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+    }
+
+    .status-badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .status-pending {
+      background: var(--bg-muted);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .status-passed {
+      background: var(--success-soft);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .status-failed {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .exam-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .exam-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .score-text {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Dashboard Summary Table */
+    .table-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      min-width: 640px;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    th, td {
+      padding: 13px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background: var(--bg-muted);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12.5px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Exam Runner Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .question-counter {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 16.5px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      color: var(--text-primary);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 14px;
+    }
+
+    .option-item:hover {
+      border-color: var(--primary-border);
+      background: #f8faff;
+    }
+
+    .option-item.selected {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      font-weight: 500;
+    }
+
+    .option-item input {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    .result-box {
+      text-align: center;
+      padding: 16px 8px;
+    }
+
+    .result-score {
+      font-size: 42px;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+
+    /* Exam Editor Styles */
+    .btn-danger-ghost {
+      background: transparent;
+      color: var(--danger);
+      border-color: var(--danger-border);
+    }
+
+    .btn-danger-ghost:hover {
+      background: var(--danger-soft);
+    }
+
+    .modal-dialog.modal-lg {
+      max-width: 780px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      transition: border-color 0.15s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 68px;
+    }
+
+    .editor-questions-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 18px 0 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .editor-question-card {
+      background: var(--bg-muted);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .editor-question-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .editor-option-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .editor-option-row input[type="radio"] {
+      accent-color: var(--success);
+      width: 17px;
+      height: 17px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .editor-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Login Screen */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #eff6ff 0%, #f4f6fb 60%, #eef2ff 100%);
+    }
+
+    .login-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 500px;
+      padding: 30px 28px;
+    }
+
+    .login-title {
+      font-size: 21px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    .login-subtitle {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .login-error {
+      background: var(--danger-soft);
+      border: 1px solid var(--danger-border);
+      color: var(--danger);
+      font-size: 13px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .quick-emp-section {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .quick-emp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .quick-emp-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-muted);
+      font-family: inherit;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .quick-emp-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .quick-emp-id {
+      font-weight: 600;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .assigned-highlight {
+      border: 2px solid var(--primary);
+      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    }
+
+    .admin-panel {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 25;
+    }
+
+    .sidebar-backdrop.open {
+      display: block;
+    }
+
+    .sidebar-close-btn {
+      display: none;
+      background: var(--bg-muted);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .exam-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: min(300px, 85vw);
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar-close-btn {
+        display: inline-flex;
+        align-items: center;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+      .mobile-menu-btn {
+        display: inline-flex;
+      }
+      .topbar {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .page-title {
+        font-size: 18px;
+      }
+      .page-subtitle {
+        font-size: 12.5px;
+      }
+      .readiness-pill {
+        font-size: 12px;
+        padding: 5px 11px;
+      }
+      .content-container {
+        padding: 18px 16px 28px;
+      }
+      .banner-card {
+        padding: 18px;
+        gap: 14px;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .form-control {
+        font-size: 16px;
+      }
+      .modal-backdrop {
+        padding: 10px;
+      }
+      .modal-dialog {
+        max-height: 92vh;
+        border-radius: var(--radius-md);
+      }
+      .modal-header,
+      .modal-body,
+      .modal-footer {
+        padding: 14px 16px;
+      }
+      .modal-footer {
+        flex-wrap: wrap;
+      }
+      th, td {
+        padding: 11px 12px;
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-screen {
+        padding: 14px;
+        align-items: flex-start;
+      }
+      .login-card {
+        padding: 22px 18px;
+      }
+      .quick-emp-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .stat-card {
+        padding: 14px 16px;
+      }
+      .stat-value {
+        font-size: 22px;
+      }
+      .exam-card {
+        padding: 16px;
+      }
+      .option-item {
+        padding: 12px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(false)"></div>
+
+    <!-- Left Sidebar: Top-Left User Profile + Main Menu Below -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Top-Left Profile -->
+      <div class="profile-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <div class="brand-badge" style="margin-bottom: 0;">
+            <span class="brand-dot"></span>
+            QA Pre-Work Portal
+          </div>
+          <button type="button" class="sidebar-close-btn" onclick="toggleSidebar(false)">ปิดเมนู</button>
+        </div>
+
+        <div class="profile-header">
+          <div class="avatar" id="userAvatar">กจ</div>
+          <div>
+            <div class="profile-name" id="userName">กัญญารัตน์ ใจดี</div>
+            <div class="profile-status">
+              <span class="status-dot"></span>
+              เข้าสู่ระบบแล้ว
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-meta">
+          <div class="meta-row">
+            <span class="meta-label">รหัสพนักงาน</span>
+            <span class="meta-value" id="userEmpId">QA-2026-0418</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">ตำแหน่ง</span>
+            <span class="meta-value" id="userPosition">QA Inspector</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">ส่วนงานที่รับผิดชอบ</span>
+            <span class="meta-value" id="userDept">Incoming &amp; Line QA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Menu (Below Profile) -->
+      <nav class="menu-section" aria-label="Main Menu">
+        <div class="menu-heading">Main Menu</div>
+
+        <button class="nav-btn active" data-view="dashboard" onclick="switchView('dashboard')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="9" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="5" rx="1.5"></rect>
+            <rect x="14" y="12" width="7" height="9" rx="1.5"></rect>
+            <rect x="3" y="16" width="7" height="5" rx="1.5"></rect>
+          </svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-btn" data-view="exams" onclick="switchView('exams')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          <span>แบบทดสอบ</span>
+          <span class="nav-badge" id="menuExamBadge">สุ่ม 1 ชุด</span>
+        </button>
+
+        <button class="nav-btn" id="navUsersBtn" data-view="users" onclick="switchView('users')" style="display: none;">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>จัดการผู้ใช้งาน &amp; PIN</span>
+          <span class="nav-badge">12 คน</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer" style="flex-direction: column; gap: 8px;">
+        <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="openChangePinModal()">
+          เปลี่ยนรหัส PIN ของฉัน
+        </button>
+        <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="logoutUser()">
+          สลับผู้ใช้งาน / ออกจากระบบ
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area (Right Side) -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="เปิดเมนู">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div>
+            <h1 class="page-title" id="topbarTitle">Dashboard</h1>
+            <p class="page-subtitle" id="topbarSubtitle">ภาพรวมความพร้อมและผลการทำแบบทดสอบก่อนเริ่มปฏิบัติงาน QA</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="readiness-pill" id="readinessPill">
+            <span>สถานะ: รอทำแบบทดสอบให้ครบ</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-container">
+        <!-- VIEW 1: DASHBOARD -->
+        <section id="view-dashboard" class="view-section active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">ชุดข้อสอบที่คุณได้รับสุ่ม</div>
+              <div class="stat-value" id="statAssignedCode">-</div>
+              <div class="stat-note">สุ่ม 1 ชุดจากทั้งหมด 4 ชุด</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">สถานะของคุณ</div>
+              <div class="stat-value" id="statMyStatus" style="font-size: 20px; padding-top: 4px;">ยังไม่ทำ</div>
+              <div class="stat-note">ต้องผ่านเกณฑ์ก่อนเริ่มปฏิบัติงาน</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">คะแนนล่าสุดของคุณ</div>
+              <div class="stat-value" id="statAvgScore">-</div>
+              <div class="stat-note" id="statPassCriteriaNote">เกณฑ์ผ่านขั้นต่ำ 80%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">ความพร้อมทีม QA (10 คน)</div>
+              <div class="stat-value" id="statTeamPassed">0 / 10</div>
+              <div class="stat-note">จำนวนพนักงานที่สอบผ่านแล้ว</div>
+            </div>
+          </div>
+
+          <div class="banner-card">
+            <div class="banner-info">
+              <div class="banner-title" id="bannerTitle">แบบทดสอบก่อนเริ่มปฏิบัติงาน QA</div>
+              <div class="banner-desc" id="bannerDesc">
+                กำลังโหลดข้อมูล...
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="overallProgressBar" style="width: 0%;"></div>
+              </div>
+            </div>
+            <div id="bannerActions" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+          </div>
+
+          <div class="section-header">
+            <div>
+              <h2 class="section-title" id="dashboardTableTitle">สรุปการแจกจ่ายข้อสอบและผลสอบ</h2>
+              <p class="page-subtitle" id="dashboardTableSubtitle">ภาพรวมสถานะการทดสอบก่อนเริ่มปฏิบัติงาน</p>
+            </div>
+            <div id="adminTableActions" style="display: none; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-outline btn-sm" onclick="adminRandomizeAssignments()">สุ่มชุดข้อสอบ (10 คน)</button>
+              <button class="btn btn-primary btn-sm" id="publishBtn" onclick="adminPublishAssignments()">ยืนยันแจกจ่ายข้อสอบ</button>
+              <button class="btn btn-outline btn-sm" onclick="adminResetRound()">รีเซ็ตรอบสอบ</button>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table>
+              <thead id="dashboardTableHead"></thead>
+              <tbody id="dashboardTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- VIEW 2: EXAMS -->
+        <section id="view-exams" class="view-section">
+          <!-- Employee View: 1 Assigned Exam -->
+          <div id="employeeExamView" style="display: none;">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">แบบทดสอบที่คุณได้รับมอบหมาย</h2>
+                <p class="page-subtitle">แบบทดสอบ 1 ชุดที่ Admin สุ่มและแจกจ่ายให้เฉพาะรหัสพนักงานของคุณ</p>
+              </div>
+            </div>
+            <div id="assignedExamContainer"></div>
+          </div>
+
+          <!-- Admin View: Manage & Edit All 4 Exam Sets -->
+          <div id="adminExamView" style="display: none;">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">คลังข้อสอบทั้ง 4 ชุด (สิทธิ์ผู้ดูแลระบบ)</h2>
+                <p class="page-subtitle">แก้ไขโจทย์ ตัวเลือก และเกณฑ์คะแนนของแต่ละชุด จากนั้นไปที่ Dashboard เพื่อสุ่มและแจกจ่ายให้พนักงาน</p>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="resetDefaultExams()">คืนค่าข้อสอบเริ่มต้น</button>
+            </div>
+            <div class="exam-grid" id="examCardsGrid"></div>
+          </div>
+        </section>
+
+        <!-- VIEW 3: USER & PIN MANAGEMENT (ADMIN ONLY) -->
+        <section id="view-users" class="view-section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">จัดการผู้ใช้งานและรหัส PIN (Admin 2 คน + พนักงาน 10 คน)</h2>
+              <p class="page-subtitle">ผู้ดูแลระบบสามารถตรวจสอบและเปลี่ยนรหัส PIN 4 หลักให้กับผู้ใช้งานทุกคนได้จากหน้านี้</p>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="resetAllPinsToDefault()">รีเซ็ต PIN ทุกคนเป็นค่าเริ่มต้น</button>
+          </div>
+
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>รหัสผู้ใช้งาน</th>
+                  <th>ชื่อ-นามสกุล</th>
+                  <th>ตำแหน่ง</th>
+                  <th>ส่วนงาน</th>
+                  <th>สิทธิ์</th>
+                  <th>รหัส PIN ปัจจุบัน</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Change PIN Modal -->
+  <div class="modal-backdrop" id="changePinModal">
+    <div class="modal-dialog" style="max-width: 440px;" role="dialog" aria-modal="true" aria-labelledby="changePinTitle">
+      <div class="modal-header">
+        <div>
+          <div class="exam-set-tag" id="changePinTargetBadge" style="margin-bottom: 4px;">เปลี่ยนรหัส PIN</div>
+          <h3 id="changePinTitle" style="font-size: 16.5px; font-weight: 600;">ตั้งรหัส PIN ใหม่ (4 หลัก)</h3>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="closeChangePinModal()">ปิด</button>
+      </div>
+
+      <form onsubmit="saveNewPin(event)">
+        <div class="modal-body">
+          <div id="changePinError" class="login-error" style="margin-bottom: 12px;"></div>
+          <div class="form-group">
+            <label class="form-label" for="newPinInput">รหัส PIN ใหม่ (ตัวเลข 4 หลัก)</label>
+            <input
+              type="password"
+              id="newPinInput"
+              class="form-control"
+              style="letter-spacing: 0.35em; font-weight: 700; text-align: center;"
+              maxlength="4"
+              inputmode="numeric"
+              placeholder="••••"
+              required
+            />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="confirmPinInput">ยืนยันรหัส PIN ใหม่อีกครั้ง</label>
+            <input
+              type="password"
+              id="confirmPinInput"
+              class="form-control"
+              style="letter-spacing: 0.35em; font-weight: 700; text-align: center;"
+              maxlength="4"
+              inputmode="numeric"
+              placeholder="••••"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeChangePinModal()">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary">บันทึกรหัส PIN</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Exam Runner Modal -->
+  <div class="modal-backdrop" id="examModal">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalExamTitle">
+      <div class="modal-header">
+        <div>
+          <div class="exam-set-tag" id="modalSetTag" style="margin-bottom: 4px;">ชุดที่ 1</div>
+          <h3 id="modalExamTitle" style="font-size: 16.5px; font-weight: 600;">ชื่อชุดข้อสอบ</h3>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="closeExamModal()">ปิด</button>
+      </div>
+
+      <div class="modal-body" id="modalBody"></div>
+
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <!-- Exam Editor Modal -->
+  <div class="modal-backdrop" id="editExamModal">
+    <div class="modal-dialog modal-lg" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+      <div class="modal-header">
+        <div>
+          <div class="exam-set-tag" id="editModalSetTag" style="margin-bottom: 4px;">แก้ไขชุดที่ 1</div>
+          <h3 id="editModalTitle" style="font-size: 16.5px; font-weight: 600;">แก้ไขเนื้อหาแบบทดสอบ</h3>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="closeEditExamModal()">ยกเลิก</button>
+      </div>
+
+      <div class="modal-body" id="editModalBody"></div>
+
+      <div class="modal-footer">
+        <span class="editor-hint">การเปลี่ยนแปลงจะถูกบันทึกไว้ในเบราว์เซอร์ (Local Storage)</span>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-outline" onclick="closeEditExamModal()">ยกเลิก</button>
+          <button class="btn btn-primary" onclick="saveEditedExam()">บันทึกการแก้ไข</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. รายชื่อผู้ใช้งาน: Admin 2 คน + พนักงาน QA 10 คน
+    // =========================================================================
+    const ADMINS = [
+      { empId: 'ADM-001', name: 'ศิริพร วรโชติ', initials: 'ศว', position: 'QA Supervisor (Admin)', department: 'QA Management', role: 'admin', defaultPin: '1111' },
+      { empId: 'ADM-002', name: 'ชัยวัฒน์ เกรียงไกร', initials: 'ชก', position: 'QA Lead (Admin)', department: 'QA Management', role: 'admin', defaultPin: '2222' },
+    ];
+
+    const EMPLOYEES = [
+      { empId: 'QA-001', name: 'กัญญารัตน์ ใจดี', initials: 'กจ', position: 'QA Inspector', department: 'Incoming QA', role: 'employee', defaultPin: '0001' },
+      { empId: 'QA-002', name: 'ธนากร สุขสันต์', initials: 'ธส', position: 'QA Inspector', department: 'Line QA (ไลน์ 1)', role: 'employee', defaultPin: '0002' },
+      { empId: 'QA-003', name: 'พิมพ์ชนก รักงาน', initials: 'พร', position: 'QA Inspector', department: 'Line QA (ไลน์ 2)', role: 'employee', defaultPin: '0003' },
+      { empId: 'QA-004', name: 'ณัฐวุฒิ มั่นคง', initials: 'ณม', position: 'Senior QA', department: 'Final Inspection', role: 'employee', defaultPin: '0004' },
+      { empId: 'QA-005', name: 'วราภรณ์ แสงทอง', initials: 'วส', position: 'QA Inspector', department: 'Incoming QA', role: 'employee', defaultPin: '0005' },
+      { empId: 'QA-006', name: 'ศุภชัย พงษ์พานิช', initials: 'ศพ', position: 'QA Inspector', department: 'Packaging QA', role: 'employee', defaultPin: '0006' },
+      { empId: 'QA-007', name: 'อรทัย วิริยะ', initials: 'อว', position: 'QA Inspector', department: 'Line QA (ไลน์ 1)', role: 'employee', defaultPin: '0007' },
+      { empId: 'QA-008', name: 'ปิยะพงษ์ เจริญสุข', initials: 'ปจ', position: 'QA Inspector', department: 'Final Inspection', role: 'employee', defaultPin: '0008' },
+      { empId: 'QA-009', name: 'ชุติมา นิลมณี', initials: 'ชน', position: 'QA Inspector', department: 'Packaging QA', role: 'employee', defaultPin: '0009' },
+      { empId: 'QA-010', name: 'เอกราช บุญมี', initials: 'อบ', position: 'QA Technician', department: 'Lab & Calibration', role: 'employee', defaultPin: '0010' },
+    ];
+
+    const ALL_USERS = [...ADMINS, ...EMPLOYEES];
+    const STORAGE_KEY_PINS = 'qa_user_pins_v1';
+    let currentUser = null;
+    let pinTargetEmpId = null;
+
+    function loadUserPins() {
+      const defaults = {};
+      ALL_USERS.forEach((u) => {
+        defaults[u.empId] = u.defaultPin;
+      });
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_PINS);
+        return raw ? { ...defaults, ...JSON.parse(raw) } : defaults;
+      } catch {
+        return defaults;
+      }
+    }
+
+    let userPins = loadUserPins();
+
+    function saveUserPins() {
+      localStorage.setItem(STORAGE_KEY_PINS, JSON.stringify(userPins));
+    }
+
+    // =========================================================================
+    // 2. ข้อมูลชุดข้อสอบ 4 ชุด (แก้ไขผ่านหน้าเว็บได้ และบันทึกใน Local Storage)
+    // =========================================================================
+    const STORAGE_KEY_EXAMS = 'qa_exam_sets_v1';
+    const STORAGE_KEY_RESULTS = 'qa_exam_results_v1';
+
+    const DEFAULT_EXAM_SETS = [
+      {
+        id: 1,
+        code: 'ชุดที่ 1',
+        title: 'มาตรฐานการตรวจสอบคุณภาพเบื้องต้น (QA Fundamentals)',
+        description: 'Placeholder: ทดสอบความเข้าใจเกี่ยวกับหลักการ QA, เกณฑ์การยอมรับ (AQL) และการตรวจเช็กเบื้องต้นก่อนเริ่มงาน',
+        durationMinutes: 15,
+        passScore: 80,
+        questions: [
+          {
+            q: '[ตัวอย่างคำถาม 1.1] ก่อนเริ่มปฏิบัติงานตรวจสอบคุณภาพ สิ่งแรกที่พนักงาน QA ต้องตรวจสอบคืออะไร?',
+            options: [
+              'ตรวจสอบความพร้อมของเครื่องมือวัดและเอกสารมาตรฐาน (WI/SOP)',
+              'เริ่มสุ่มตรวจสินค้าทันทีโดยไม่ต้องดูเอกสาร',
+              'รอหัวหน้างานสั่งการอย่างเดียวโดยไม่เตรียมอุปกรณ์',
+              'ทำความสะอาดพื้นที่หลังเลิกงาน',
+            ],
+            answer: 0,
+          },
+          {
+            q: '[ตัวอย่างคำถาม 1.2] เมื่อพบชิ้นงานที่สงสัยว่าไม่ได้มาตรฐาน (NG) ควรปฏิบัติอย่างไรเป็นอันดับแรก?',
+            options: [
+              'ปล่อยผ่านไปก่อนเพื่อความรวดเร็ว',
+              'คัดแยกชิ้นงานออก ติดป้ายชี้บ่ง และบันทึกข้อมูลตามขั้นตอน',
+              'นำไปทิ้งทันทีโดยไม่แจ้งผู้เกี่ยวข้อง',
+              'ซ่อมแซมชิ้นงานด้วยตนเอง',
+            ],
+            answer: 1,
+          },
+        ],
+      },
+      {
+        id: 2,
+        code: 'ชุดที่ 2',
+        title: 'ขั้นตอนการตรวจรับและคัดแยกสินค้า (Inspection & Sorting)',
+        description: 'Placeholder: ทดสอบความแม่นยำในการจำแนกจุดบกพร่อง (Defect) ประเภท Critical, Major และ Minor',
+        durationMinutes: 20,
+        passScore: 80,
+        questions: [
+          {
+            q: '[ตัวอย่างคำถาม 2.1] ข้อใดคือความหมายของ Critical Defect?',
+            options: [
+              'จุดบกพร่องเล็กน้อยที่ไม่กระทบการใช้งานและความปลอดภัย',
+              'จุดบกพร่องที่อาจก่อให้เกิดอันตรายต่อผู้ใช้งานหรือผิดกฎหมาย',
+              'รอยขีดข่วนบริเวณกล่องบรรจุภัณฑ์ด้านนอก',
+              'สีของฉลากซีดจางเล็กน้อย',
+            ],
+            answer: 1,
+          },
+          {
+            q: '[ตัวอย่างคำถาม 2.2] การสุ่มตัวอย่างเพื่อตรวจสอบ (Sampling) ควรยึดตามเกณฑ์ใด?',
+            options: [
+              'หยิบเฉพาะชิ้นที่อยู่ด้านบนสุดของพาเลท',
+              'สุ่มตามตารางและแผนการสุ่มที่ระบุไว้ในมาตรฐานงาน',
+              'ตรวจเพียง 1 ชิ้นต่อล็อตการผลิต',
+              'เลือกตรวจเฉพาะชิ้นที่ดูสวยงาม',
+            ],
+            answer: 1,
+          },
+        ],
+      },
+      {
+        id: 3,
+        code: 'ชุดที่ 3',
+        title: 'การบันทึกข้อมูลและรายงานความผิดปกติ (Defect Reporting)',
+        description: 'Placeholder: ทดสอบความเข้าใจในการกรอกแบบฟอร์มตรวจสอบ การบันทึก Lot No. และการแจ้งเตือนเมื่อพบปัญหา',
+        durationMinutes: 15,
+        passScore: 80,
+        questions: [
+          {
+            q: '[ตัวอย่างคำถาม 3.1] ข้อมูลใดที่จำเป็นต้องระบุให้ครบถ้วนในใบบันทึกผลการตรวจสอบ?',
+            options: [
+              'วันที่ตรวจ, Lot No., จำนวนที่สุ่ม, ผลการตรวจ และชื่อผู้ตรวจ',
+              'ระบุเพียงชื่อผู้ตรวจอย่างเดียว',
+              'ระบุเฉพาะวันที่และเวลาเลิกงาน',
+              'ไม่จำเป็นต้องบันทึกหากผลเป็น OK',
+            ],
+            answer: 0,
+          },
+          {
+            q: '[ตัวอย่างคำถาม 3.2] หากพบแนวโน้มของเสียเกิดขึ้นซ้ำๆ ในไลน์ผลิต ควรดำเนินการอย่างไร?',
+            options: [
+              'รอจนกว่าจะจบกะแล้วค่อยแจ้ง',
+              'แจ้งหัวหน้างานและฝ่ายผลิตทันทีเพื่อหยุดยั้งปัญหา',
+              'แก้ตัวเลขในรายงานให้ผ่านเกณฑ์',
+              'เปลี่ยนจุดตรวจใหม่โดยไม่แจ้งใคร',
+            ],
+            answer: 1,
+          },
+        ],
+      },
+      {
+        id: 4,
+        code: 'ชุดที่ 4',
+        title: 'ความปลอดภัยและข้อปฏิบัติหน้างาน (Safety & SOP Compliance)',
+        description: 'Placeholder: ทดสอบความรู้ด้านความปลอดภัยในการทำงาน การสวมใส่อุปกรณ์ PPE และกฎระเบียบในพื้นที่ QA',
+        durationMinutes: 10,
+        passScore: 80,
+        questions: [
+          {
+            q: '[ตัวอย่างคำถาม 4.1] อุปกรณ์ป้องกันอันตรายส่วนบุคคล (PPE) ควรสวมใส่เมื่อใด?',
+            options: [
+              'สวมใส่เฉพาะตอนที่มีผู้บริหารเดินตรวจ',
+              'สวมใส่ตลอดเวลาที่ปฏิบัติงานในพื้นที่ที่กำหนด',
+              'สวมใส่เฉพาะเมื่อรู้สึกไม่ปลอดภัย',
+              'ไม่ต้องสวมใส่หากทำงานมานานแล้ว',
+            ],
+            answer: 1,
+          },
+          {
+            q: '[ตัวอย่างคำถาม 4.2] หากพบเครื่องมือวัดชำรุดหรือหมดอายุการสอบเทียบ (Calibration) ควรทำอย่างไร?',
+            options: [
+              'นำมาใช้งานต่อไปก่อนจนกว่าจะมีเครื่องใหม่',
+              'งดใช้งาน แยกเก็บ ติดป้ายชำรุด และแจ้งผู้รับผิดชอบทันที',
+              'ซ่อมแซมเองด้วยเทปกาว',
+              'นำไปสลับกับเครื่องของเพื่อนร่วมงาน',
+            ],
+            answer: 1,
+          },
+        ],
+      },
+    ];
+
+    function loadStoredData(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : structuredClone(fallback);
+      } catch {
+        return structuredClone(fallback);
+      }
+    }
+
+    const STORAGE_KEY_DISTRIBUTION = 'qa_distribution_v1';
+    const STORAGE_KEY_CURRENT_EMP = 'qa_current_emp_v1';
+
+    function saveExamSets() {
+      localStorage.setItem(STORAGE_KEY_EXAMS, JSON.stringify(EXAM_SETS));
+    }
+
+    function saveExamResults() {
+      localStorage.setItem(STORAGE_KEY_RESULTS, JSON.stringify(employeeResults));
+    }
+
+    function saveDistribution() {
+      localStorage.setItem(STORAGE_KEY_DISTRIBUTION, JSON.stringify(distributionState));
+    }
+
+    let EXAM_SETS = loadStoredData(STORAGE_KEY_EXAMS, DEFAULT_EXAM_SETS);
+
+    // สุ่มกระจายข้อสอบ 4 ชุดให้พนักงาน 10 คนอย่างสมดุล (ชุดละ 2-3 คน)
+    function generateBalancedAssignments() {
+      const pool = [];
+      for (let i = 0; i < EMPLOYEES.length; i++) {
+        pool.push(EXAM_SETS[i % EXAM_SETS.length].id);
+      }
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      const map = {};
+      EMPLOYEES.forEach((emp, idx) => {
+        map[emp.empId] = pool[idx];
+      });
+      return map;
+    }
+
+    function buildDefaultResults() {
+      const map = {};
+      EMPLOYEES.forEach((emp) => {
+        map[emp.empId] = { status: 'pending', score: null };
+      });
+      return map;
+    }
+
+    let distributionState = loadStoredData(STORAGE_KEY_DISTRIBUTION, {
+      isPublished: false,
+      publishedBy: null,
+      publishedAt: null,
+      assignments: generateBalancedAssignments(),
+    });
+
+    let employeeResults = loadStoredData(STORAGE_KEY_RESULTS, null);
+    if (!employeeResults) {
+      employeeResults = buildDefaultResults();
+      saveExamResults();
+    }
+
+    // State สำหรับ Modal ทำข้อสอบ
+    let activeExam = null;
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+
+    // State สำหรับ Modal แก้ไขข้อสอบ
+    let editingExamDraft = null;
+
+    // =========================================================================
+    // 3. ระบบตรวจสอบสิทธิ์ Login (เชื่อมกับ login.html) & การแสดงผลตามสิทธิ์
+    // =========================================================================
+    function initApp() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramEmpId = urlParams.get('empId');
+      const savedEmpId = paramEmpId || localStorage.getItem(STORAGE_KEY_CURRENT_EMP);
+
+      if (savedEmpId && ALL_USERS.some((u) => u.empId === savedEmpId)) {
+        loginAsUser(savedEmpId);
+      } else {
+        window.location.href = 'login.html';
+      }
+    }
+
+    function loginAsUser(empId) {
+      const user = ALL_USERS.find((u) => u.empId === empId);
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      currentUser = user;
+      localStorage.setItem(STORAGE_KEY_CURRENT_EMP, user.empId);
+
+      if (user.role === 'employee' && !employeeResults[user.empId]) {
+        employeeResults[user.empId] = { status: 'pending', score: null };
+        saveExamResults();
+      }
+
+      document.getElementById('userAvatar').textContent = user.initials;
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmpId').textContent = user.empId;
+      document.getElementById('userPosition').textContent = user.position;
+      document.getElementById('userDept').textContent = user.department;
+
+      const menuBadge = document.getElementById('menuExamBadge');
+      menuBadge.textContent = user.role === 'admin' ? 'จัดการ 4 ชุด' : '1 ชุด';
+
+      document.getElementById('navUsersBtn').style.display = user.role === 'admin' ? 'flex' : 'none';
+
+      switchView('dashboard');
+      renderAll();
+    }
+
+    function logoutUser() {
+      currentUser = null;
+      localStorage.removeItem(STORAGE_KEY_CURRENT_EMP);
+      window.location.href = 'login.html';
+    }
+
+    function switchView(viewName) {
+      if (viewName === 'users' && currentUser?.role !== 'admin') {
+        viewName = 'dashboard';
+      }
+
+      document.querySelectorAll('.view-section').forEach((sec) => {
+        sec.classList.remove('active');
+      });
+      document.getElementById(`view-${viewName}`).classList.add('active');
+
+      document.querySelectorAll('.nav-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.view === viewName);
+      });
+
+      const isAdmin = currentUser?.role === 'admin';
+      const titles = {
+        dashboard: {
+          title: 'Dashboard',
+          subtitle: isAdmin
+            ? 'หน้าผู้ดูแลระบบ: สุ่ม แจกจ่ายข้อสอบ และติดตามผลสอบพนักงานทั้ง 10 คน'
+            : 'ภาพรวมความพร้อมและผลการทำแบบทดสอบก่อนเริ่มปฏิบัติงาน QA',
+        },
+        exams: {
+          title: 'แบบทดสอบ',
+          subtitle: isAdmin
+            ? 'คลังข้อสอบทั้ง 4 ชุด สำหรับผู้ดูแลระบบในการแก้ไขและจัดการเนื้อหา'
+            : 'แบบทดสอบที่ได้รับมอบหมายจากผู้ดูแลระบบ',
+        },
+        users: {
+          title: 'จัดการผู้ใช้งาน & PIN',
+          subtitle: 'สิทธิ์ผู้ดูแลระบบ: ตรวจสอบและเปลี่ยนรหัส PIN 4 หลักของพนักงานและ Admin ทุกคน',
+        },
+      };
+
+      document.getElementById('topbarTitle').textContent = titles[viewName].title;
+      document.getElementById('topbarSubtitle').textContent = titles[viewName].subtitle;
+
+      toggleSidebar(false);
+    }
+
+    function toggleSidebar(forceOpen) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !sidebar.classList.contains('open');
+      sidebar.classList.toggle('open', shouldOpen);
+      backdrop.classList.toggle('open', shouldOpen);
+    }
+
+    function getStatusBadgeHTML(result) {
+      if (result.status === 'passed') {
+        return '<span class="status-badge status-passed">ผ่านเกณฑ์</span>';
+      }
+      if (result.status === 'failed') {
+        return '<span class="status-badge status-failed">ไม่ผ่านเกณฑ์</span>';
+      }
+      return '<span class="status-badge status-pending">ยังไม่ทำ</span>';
+    }
+
+    function getAssignedExamForEmployee(empId) {
+      const assignedId = distributionState.assignments[empId];
+      return EXAM_SETS.find((e) => e.id === assignedId) || EXAM_SETS[0];
+    }
+
+    // Admin Actions: สุ่ม, ปรับรายคน, แจกจ่าย, รีเซ็ตรอบ
+    function adminRandomizeAssignments() {
+      if (currentUser?.role !== 'admin') return;
+      distributionState.assignments = generateBalancedAssignments();
+      saveDistribution();
+      renderAll();
+    }
+
+    function adminChangeEmployeeExam(empId, examIdStr) {
+      if (currentUser?.role !== 'admin') return;
+      distributionState.assignments[empId] = parseInt(examIdStr, 10);
+      saveDistribution();
+      renderAll();
+    }
+
+    function adminPublishAssignments() {
+      if (currentUser?.role !== 'admin') return;
+      const now = new Date();
+      const timeStr = now.toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+      distributionState.isPublished = true;
+      distributionState.publishedBy = `${currentUser.name} (${currentUser.empId})`;
+      distributionState.publishedAt = timeStr;
+      saveDistribution();
+      renderAll();
+    }
+
+    function adminResetRound() {
+      if (currentUser?.role !== 'admin') return;
+      distributionState.isPublished = false;
+      distributionState.publishedBy = null;
+      distributionState.publishedAt = null;
+      distributionState.assignments = generateBalancedAssignments();
+      saveDistribution();
+      employeeResults = buildDefaultResults();
+      saveExamResults();
+      renderAll();
+    }
+
+    function adminResetSingleEmployee(empId) {
+      if (currentUser?.role !== 'admin') return;
+      employeeResults[empId] = { status: 'pending', score: null };
+      saveExamResults();
+      renderAll();
+    }
+
+    function renderAll() {
+      if (!currentUser) return;
+      const isAdmin = currentUser.role === 'admin';
+
+      document.getElementById('adminTableActions').style.display = isAdmin ? 'flex' : 'none';
+      document.getElementById('employeeExamView').style.display = isAdmin ? 'none' : 'block';
+      document.getElementById('adminExamView').style.display = isAdmin ? 'block' : 'none';
+
+      renderDashboardStats();
+      renderDashboardTable();
+
+      if (isAdmin) {
+        renderExamCards();
+        renderUsersTable();
+      } else {
+        renderAssignedExamCard();
+      }
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById('usersTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = ALL_USERS.map((u) => {
+        const isAdm = u.role === 'admin';
+        const roleBadge = isAdm
+          ? '<span class="status-badge status-passed">Admin</span>'
+          : '<span class="status-badge status-pending">พนักงาน QA</span>';
+        const pinVal = userPins[u.empId] || u.defaultPin;
+
+        return `
+          <tr>
+            <td><strong>${escapeHtml(u.empId)}</strong></td>
+            <td>${escapeHtml(u.name)}</td>
+            <td>${escapeHtml(u.position)}</td>
+            <td>${escapeHtml(u.department)}</td>
+            <td>${roleBadge}</td>
+            <td><code>${escapeHtml(pinVal)}</code></td>
+            <td>
+              <button class="btn btn-outline btn-sm" onclick="openChangePinModal('${u.empId}')">
+                เปลี่ยน PIN
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openChangePinModal(targetEmpId) {
+      const empId = targetEmpId || currentUser?.empId;
+      if (!empId) return;
+
+      // Only Admin can change someone else's PIN
+      if (empId !== currentUser?.empId && currentUser?.role !== 'admin') return;
+
+      const targetUser = ALL_USERS.find((u) => u.empId === empId);
+      if (!targetUser) return;
+
+      pinTargetEmpId = empId;
+      document.getElementById('changePinTargetBadge').textContent = `${targetUser.empId} — ${targetUser.name}`;
+      document.getElementById('changePinTitle').textContent =
+        empId === currentUser.empId ? 'เปลี่ยนรหัส PIN ของฉัน' : `เปลี่ยนรหัส PIN ให้ ${targetUser.name}`;
+      document.getElementById('newPinInput').value = '';
+      document.getElementById('confirmPinInput').value = '';
+      document.getElementById('changePinError').style.display = 'none';
+      document.getElementById('changePinModal').classList.add('open');
+      setTimeout(() => document.getElementById('newPinInput').focus(), 50);
+    }
+
+    function closeChangePinModal() {
+      document.getElementById('changePinModal').classList.remove('open');
+      pinTargetEmpId = null;
+    }
+
+    function saveNewPin(event) {
+      event.preventDefault();
+      const newPin = document.getElementById('newPinInput').value.trim();
+      const confirmPin = document.getElementById('confirmPinInput').value.trim();
+      const errBox = document.getElementById('changePinError');
+
+      if (!/^\d{4}$/.test(newPin)) {
+        errBox.textContent = 'กรุณากรอกรหัส PIN เป็นตัวเลข 4 หลักเท่านั้น';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      if (newPin !== confirmPin) {
+        errBox.textContent = 'รหัส PIN ทั้งสองช่องไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      userPins[pinTargetEmpId] = newPin;
+      saveUserPins();
+      closeChangePinModal();
+      renderAll();
+      alert(`บันทึกรหัส PIN ใหม่สำหรับ ${pinTargetEmpId} เรียบร้อยแล้ว`);
+    }
+
+    function resetAllPinsToDefault() {
+      if (currentUser?.role !== 'admin') return;
+      ALL_USERS.forEach((u) => {
+        userPins[u.empId] = u.defaultPin;
+      });
+      saveUserPins();
+      renderAll();
+      alert('รีเซ็ตรหัส PIN ของผู้ใช้งานทุกคนกลับเป็นค่าเริ่มต้นเรียบร้อยแล้ว');
+    }
+
+    document.getElementById('newPinInput').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    });
+    document.getElementById('confirmPinInput').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    });
+
+    function renderDashboardStats() {
+      const isAdmin = currentUser.role === 'admin';
+      const teamPassedCount = EMPLOYEES.filter(
+        (emp) => employeeResults[emp.empId]?.status === 'passed'
+      ).length;
+
+      const pill = document.getElementById('readinessPill');
+      const bannerTitle = document.getElementById('bannerTitle');
+      const bannerDesc = document.getElementById('bannerDesc');
+      const bannerActions = document.getElementById('bannerActions');
+
+      if (isAdmin) {
+        const pendingCount = EMPLOYEES.filter(
+          (emp) => (employeeResults[emp.empId]?.status || 'pending') === 'pending'
+        ).length;
+        const teamPct = Math.round((teamPassedCount / EMPLOYEES.length) * 100);
+
+        document.getElementById('statAssignedCode').textContent = distributionState.isPublished ? 'แจกจ่ายแล้ว' : 'รอแจกจ่าย';
+        document.getElementById('statAssignedCode').style.fontSize = '20px';
+        document.getElementById('statMyStatus').innerHTML = distributionState.isPublished
+          ? `<span class="status-badge status-passed">เปิดสอบอยู่</span>`
+          : `<span class="status-badge status-pending">ยังไม่เปิดสอบ</span>`;
+        document.getElementById('statAvgScore').textContent = `${pendingCount} คน`;
+        document.getElementById('statPassCriteriaNote').textContent = 'พนักงานที่ยังไม่ได้ทำข้อสอบ';
+        document.getElementById('statTeamPassed').textContent = `${teamPassedCount} / ${EMPLOYEES.length}`;
+        document.getElementById('overallProgressBar').style.width = `${teamPct}%`;
+
+        if (distributionState.isPublished) {
+          pill.classList.add('ready');
+          pill.innerHTML = `<span>Admin: แจกจ่ายข้อสอบแล้ว</span>`;
+          bannerTitle.textContent = `สถานะรอบสอบ: แจกจ่ายข้อสอบให้พนักงาน 10 คนเรียบร้อยแล้ว`;
+          bannerDesc.textContent = `ผู้แจกจ่าย: ${distributionState.publishedBy} | เมื่อ: ${distributionState.publishedAt}`;
+          bannerActions.innerHTML = `
+            <button class="btn btn-outline" onclick="switchView('exams')">แก้ไขคลังข้อสอบ (4 ชุด)</button>
+          `;
+        } else {
+          pill.classList.remove('ready');
+          pill.innerHTML = `<span>Admin: รอกดยืนยันแจกจ่าย</span>`;
+          bannerTitle.textContent = `ขั้นตอนผู้ดูแลระบบ: สุ่มและแจกจ่ายข้อสอบให้พนักงาน`;
+          bannerDesc.textContent = `ตรวจสอบชุดข้อสอบที่สุ่มให้พนักงาน 10 คนในตารางด้านล่าง แล้วกด "ยืนยันแจกจ่ายข้อสอบ" เพื่อให้พนักงานเริ่มทำข้อสอบได้`;
+          bannerActions.innerHTML = `
+            <button class="btn btn-outline" onclick="adminRandomizeAssignments()">สุ่มใหม่ (10 คน)</button>
+            <button class="btn btn-primary" onclick="adminPublishAssignments()">ยืนยันแจกจ่ายข้อสอบ</button>
+          `;
+        }
+        return;
+      }
+
+      // Employee Dashboard View
+      document.getElementById('statAssignedCode').style.fontSize = '26px';
+      if (!distributionState.isPublished) {
+        document.getElementById('statAssignedCode').textContent = 'รอแจกจ่าย';
+        document.getElementById('statMyStatus').innerHTML = `<span class="status-badge status-pending">รอ Admin</span>`;
+        document.getElementById('statAvgScore').textContent = '-';
+        document.getElementById('statPassCriteriaNote').textContent = 'รอผู้ดูแลระบบแจกจ่ายข้อสอบ';
+        document.getElementById('statTeamPassed').textContent = `${teamPassedCount} / ${EMPLOYEES.length}`;
+        document.getElementById('overallProgressBar').style.width = '0%';
+
+        pill.classList.remove('ready');
+        pill.innerHTML = '<span>สถานะ: รอ Admin แจกจ่ายข้อสอบ</span>';
+        bannerTitle.textContent = 'ยังไม่ได้รับการแจกจ่ายแบบทดสอบ';
+        bannerDesc.textContent = 'กรุณารอผู้ดูแลระบบ (Admin) ทำการสุ่มและกดแจกจ่ายแบบทดสอบก่อนเริ่มปฏิบัติงาน';
+        bannerActions.innerHTML = '';
+        return;
+      }
+
+      const myExam = getAssignedExamForEmployee(currentUser.empId);
+      const myRes = employeeResults[currentUser.empId] || { status: 'pending', score: null };
+      const progressPct = myRes.status === 'passed' ? 100 : myRes.status === 'failed' ? 50 : 0;
+
+      document.getElementById('statAssignedCode').textContent = myExam.code;
+      document.getElementById('statMyStatus').innerHTML = getStatusBadgeHTML(myRes);
+      document.getElementById('statAvgScore').textContent = myRes.score !== null ? `${myRes.score}%` : '-';
+      document.getElementById('statPassCriteriaNote').textContent = `เกณฑ์ผ่านขั้นต่ำ ${myExam.passScore}%`;
+      document.getElementById('statTeamPassed').textContent = `${teamPassedCount} / ${EMPLOYEES.length}`;
+      document.getElementById('overallProgressBar').style.width = `${progressPct}%`;
+
+      bannerTitle.textContent = `แบบทดสอบที่คุณได้รับ: ${myExam.code} — ${myExam.title}`;
+      bannerActions.innerHTML = `
+        <button class="btn btn-primary" onclick="switchView('exams')">ไปยังหน้าแบบทดสอบ</button>
+      `;
+
+      if (myRes.status === 'passed') {
+        pill.classList.add('ready');
+        pill.innerHTML = '<span>สถานะ: พร้อมปฏิบัติงาน QA</span>';
+        bannerDesc.textContent = `คุณสอบผ่านแล้ว (${myRes.score}%) | แจกจ่ายโดย: ${distributionState.publishedBy}`;
+      } else if (myRes.status === 'failed') {
+        pill.classList.remove('ready');
+        pill.innerHTML = '<span>สถานะ: ยังไม่ผ่านเกณฑ์</span>';
+        bannerDesc.textContent = `คะแนนล่าสุด ${myRes.score}% (เกณฑ์ผ่าน ${myExam.passScore}%) กรุณาทบทวนและทำใหม่อีกครั้ง`;
+      } else {
+        pill.classList.remove('ready');
+        pill.innerHTML = `<span>สถานะ: รอทำแบบทดสอบ (${myExam.code})</span>`;
+        bannerDesc.textContent = `แจกจ่ายโดย: ${distributionState.publishedBy} เมื่อ ${distributionState.publishedAt}`;
+      }
+    }
+
+    function renderDashboardTable() {
+      const isAdmin = currentUser.role === 'admin';
+      const thead = document.getElementById('dashboardTableHead');
+      const tbody = document.getElementById('dashboardTableBody');
+
+      if (isAdmin) {
+        document.getElementById('dashboardTableTitle').textContent = 'จัดการการสุ่มและติดตามผลสอบพนักงาน 10 คน';
+        document.getElementById('dashboardTableSubtitle').textContent =
+          'Admin สามารถกด "สุ่มชุดข้อสอบ" หรือปรับเลือกชุดข้อสอบรายบุคคลได้ แล้วกด "ยืนยันแจกจ่ายข้อสอบ"';
+
+        thead.innerHTML = `
+          <tr>
+            <th>รหัสพนักงาน</th>
+            <th>ชื่อ-นามสกุล</th>
+            <th>ส่วนงาน</th>
+            <th>ชุดข้อสอบที่สุ่มได้</th>
+            <th>คะแนน</th>
+            <th>สถานะ</th>
+            <th>จัดการ</th>
+          </tr>
+        `;
+
+        tbody.innerHTML = EMPLOYEES.map((emp) => {
+          const assignedId = distributionState.assignments[emp.empId] || 1;
+          const res = employeeResults[emp.empId] || { status: 'pending', score: null };
+          const scoreLabel = res.score !== null ? `${res.score}%` : '-';
+
+          const selectOptions = EXAM_SETS.map(
+            (ex) => `<option value="${ex.id}" ${ex.id === assignedId ? 'selected' : ''}>${escapeHtml(ex.code)}</option>`
+          ).join('');
+
+          return `
+            <tr>
+              <td><strong>${escapeHtml(emp.empId)}</strong></td>
+              <td>${escapeHtml(emp.name)}</td>
+              <td>${escapeHtml(emp.department)}</td>
+              <td>
+                <select class="form-control" style="padding: 5px 8px; width: auto; font-size: 13px;" onchange="adminChangeEmployeeExam('${emp.empId}', this.value)">
+                  ${selectOptions}
+                </select>
+              </td>
+              <td><strong>${scoreLabel}</strong></td>
+              <td>${getStatusBadgeHTML(res)}</td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="adminResetSingleEmployee('${emp.empId}')">รีเซ็ตผล</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+        return;
+      }
+
+      // Employee Table View (Read-only summary of their own exam)
+      document.getElementById('dashboardTableTitle').textContent = 'รายการแบบทดสอบของคุณ';
+      document.getElementById('dashboardTableSubtitle').textContent = 'แสดงเฉพาะแบบทดสอบที่ Admin แจกจ่ายให้คุณในรอบนี้';
+
+      thead.innerHTML = `
+        <tr>
+          <th>รหัสพนักงาน</th>
+          <th>ชุดข้อสอบที่ได้รับ</th>
+          <th>หัวข้อการทดสอบ</th>
+          <th>เกณฑ์ผ่าน</th>
+          <th>คะแนนล่าสุด</th>
+          <th>สถานะ</th>
+        </tr>
+      `;
+
+      if (!distributionState.isPublished) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">
+              รอผู้ดูแลระบบ (Admin) ทำการสุ่มและแจกจ่ายข้อสอบ
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const myExam = getAssignedExamForEmployee(currentUser.empId);
+      const myRes = employeeResults[currentUser.empId] || { status: 'pending', score: null };
+      const scoreLabel = myRes.score !== null ? `${myRes.score}%` : '-';
+
+      tbody.innerHTML = `
+        <tr>
+          <td><strong>${escapeHtml(currentUser.empId)}</strong></td>
+          <td><strong>${escapeHtml(myExam.code)}</strong></td>
+          <td>${escapeHtml(myExam.title)}</td>
+          <td>${myExam.passScore}%</td>
+          <td><strong>${scoreLabel}</strong></td>
+          <td>${getStatusBadgeHTML(myRes)}</td>
+        </tr>
+      `;
+    }
+
+    function renderAssignedExamCard() {
+      const container = document.getElementById('assignedExamContainer');
+
+      if (!distributionState.isPublished) {
+        container.innerHTML = `
+          <div class="stat-card" style="max-width: 640px; text-align: center; padding: 36px 24px;">
+            <h3 style="font-size: 17px; margin-bottom: 8px;">ยังไม่มีแบบทดสอบที่ได้รับมอบหมาย</h3>
+            <p style="font-size: 14px; color: var(--text-secondary);">
+              กรุณารอผู้ดูแลระบบ (Admin) กดสุ่มและแจกจ่ายแบบทดสอบให้คุณก่อนเริ่มทำข้อสอบ
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      const exam = getAssignedExamForEmployee(currentUser.empId);
+      const res = employeeResults[currentUser.empId] || { status: 'pending', score: null };
+      const scoreText = res.score !== null ? `คะแนนล่าสุด: ${res.score}%` : 'ยังไม่มีคะแนน';
+      const btnText = res.status === 'pending' ? 'เริ่มทำแบบทดสอบ' : 'ทำแบบทดสอบอีกครั้ง';
+
+      container.innerHTML = `
+        <article class="exam-card assigned-highlight" style="max-width: 680px;">
+          <div>
+            <div class="exam-card-top">
+              <span class="exam-set-tag">${escapeHtml(exam.code)} (แจกจ่ายโดย ${escapeHtml(distributionState.publishedBy)})</span>
+              ${getStatusBadgeHTML(res)}
+            </div>
+            <h3 class="exam-title">${escapeHtml(exam.title)}</h3>
+            <p class="exam-desc">${escapeHtml(exam.description)}</p>
+          </div>
+
+          <div>
+            <div class="exam-meta">
+              <span>จำนวน: ${exam.questions.length} ข้อ</span>
+              <span>เวลา: ${exam.durationMinutes} นาที</span>
+              <span>เกณฑ์ผ่าน: ${exam.passScore}%</span>
+            </div>
+            <div class="exam-card-footer" style="margin-top: 14px;">
+              <span class="score-text">${scoreText}</span>
+              <button class="btn btn-primary" onclick="openExamModal(${exam.id})">
+                ${btnText}
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderExamCards() {
+      const grid = document.getElementById('examCardsGrid');
+
+      grid.innerHTML = EXAM_SETS.map((exam) => {
+        return `
+          <article class="exam-card">
+            <div>
+              <div class="exam-card-top">
+                <span class="exam-set-tag">${escapeHtml(exam.code)}</span>
+              </div>
+              <h3 class="exam-title">${escapeHtml(exam.title)}</h3>
+              <p class="exam-desc">${escapeHtml(exam.description)}</p>
+            </div>
+
+            <div>
+              <div class="exam-meta">
+                <span>จำนวน: ${exam.questions.length} ข้อ</span>
+                <span>เวลา: ${exam.durationMinutes} นาที</span>
+                <span>เกณฑ์ผ่าน: ${exam.passScore}%</span>
+              </div>
+              <div class="exam-card-footer" style="margin-top: 14px;">
+                <span class="score-text" style="font-size: 12.5px; color: var(--text-muted);">คลังข้อสอบ</span>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button class="btn btn-outline btn-sm" onclick="openEditExamModal(${exam.id})">
+                    แก้ไขข้อสอบ
+                  </button>
+                  <button class="btn btn-outline btn-sm" onclick="openExamModal(${exam.id})">
+                    ทดลองทำ
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 4. ระบบจำลองการทำข้อสอบ (Interactive Exam Modal)
+    // =========================================================================
+    function openExamModal(examId) {
+      activeExam = EXAM_SETS.find((e) => e.id === examId);
+      if (!activeExam) return;
+
+      currentQuestionIndex = 0;
+      userAnswers = new Array(activeExam.questions.length).fill(null);
+
+      document.getElementById('modalSetTag').textContent = activeExam.code;
+      document.getElementById('modalExamTitle').textContent = activeExam.title;
+      document.getElementById('examModal').classList.add('open');
+
+      renderQuestionStep();
+    }
+
+    function closeExamModal() {
+      document.getElementById('examModal').classList.remove('open');
+      activeExam = null;
+    }
+
+    function renderQuestionStep() {
+      const qObj = activeExam.questions[currentQuestionIndex];
+      const totalQ = activeExam.questions.length;
+      const selectedIdx = userAnswers[currentQuestionIndex];
+
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = `
+        <div class="question-counter">คำถามข้อที่ ${currentQuestionIndex + 1} จาก ${totalQ}</div>
+        <div class="question-text">${qObj.q}</div>
+        <div class="options-list">
+          ${qObj.options
+            .map(
+              (opt, idx) => `
+            <label class="option-item ${selectedIdx === idx ? 'selected' : ''}" onclick="selectOption(${idx})">
+              <input type="radio" name="qOption" ${selectedIdx === idx ? 'checked' : ''} />
+              <span>${opt}</span>
+            </label>
+          `
+            )
+            .join('')}
+        </div>
+      `;
+
+      const modalFooter = document.getElementById('modalFooter');
+      const isFirst = currentQuestionIndex === 0;
+      const isLast = currentQuestionIndex === totalQ - 1;
+
+      modalFooter.innerHTML = `
+        <button class="btn btn-outline" ${isFirst ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''} onclick="prevQuestion()">
+          ย้อนกลับ
+        </button>
+        <div style="font-size: 13px; color: var(--text-muted);">
+          เกณฑ์ผ่าน ${activeExam.passScore}%
+        </div>
+        ${
+          isLast
+            ? `<button class="btn btn-primary" onclick="submitExam()">ส่งคำตอบ</button>`
+            : `<button class="btn btn-primary" onclick="nextQuestion()">ข้อถัดไป</button>`
+        }
+      `;
+    }
+
+    function selectOption(optionIndex) {
+      userAnswers[currentQuestionIndex] = optionIndex;
+      renderQuestionStep();
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestionStep();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < activeExam.questions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestionStep();
+      }
+    }
+
+    function submitExam() {
+      const totalQ = activeExam.questions.length;
+      let correctCount = 0;
+
+      activeExam.questions.forEach((q, idx) => {
+        if (userAnswers[idx] === q.answer) {
+          correctCount++;
+        }
+      });
+
+      const scorePct = Math.round((correctCount / totalQ) * 100);
+      const passed = scorePct >= activeExam.passScore;
+
+      const resultObj = {
+        status: passed ? 'passed' : 'failed',
+        score: scorePct,
+      };
+
+      if (
+        currentUser &&
+        currentUser.role === 'employee' &&
+        activeExam.id === distributionState.assignments[currentUser.empId]
+      ) {
+        employeeResults[currentUser.empId] = resultObj;
+        saveExamResults();
+      }
+
+      renderAll();
+
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = `
+        <div class="result-box">
+          <div style="margin-bottom: 8px;">${getStatusBadgeHTML(resultObj)}</div>
+          <div class="result-score" style="color: ${passed ? 'var(--success)' : 'var(--danger)'};">
+            ${scorePct}%
+          </div>
+          <p style="font-size: 15px; font-weight: 600; margin-bottom: 6px;">
+            ${passed ? 'ยินดีด้วย! คุณผ่านแบบทดสอบชุดนี้แล้ว' : 'ยังไม่ผ่านเกณฑ์ที่กำหนด'}
+          </p>
+          <p style="font-size: 13.5px; color: var(--text-secondary);">
+            ตอบถูก ${correctCount} จาก ${totalQ} ข้อ (เกณฑ์ผ่าน ${activeExam.passScore}%)
+          </p>
+        </div>
+      `;
+
+      const modalFooter = document.getElementById('modalFooter');
+      modalFooter.innerHTML = `
+        <button class="btn btn-outline" onclick="openExamModal(${activeExam.id})">ทำใหม่อีกครั้ง</button>
+        <button class="btn btn-primary" onclick="closeExamModal()">เสร็จสิ้น</button>
+      `;
+    }
+
+    function resetMockProgress() {
+      employeeResults = buildDefaultResults();
+      saveExamResults();
+      renderAll();
+    }
+
+    function rerollAllAssignments() {
+      employeeAssignments = generateBalancedAssignments();
+      saveAssignments();
+      employeeResults = buildDefaultResults();
+      saveExamResults();
+      renderAll();
+    }
+
+    // =========================================================================
+    // 5. ระบบแก้ไขแบบทดสอบ (Exam Editor)
+    // =========================================================================
+    function openEditExamModal(examId) {
+      const target = EXAM_SETS.find((e) => e.id === examId);
+      if (!target) return;
+
+      editingExamDraft = structuredClone(target);
+      document.getElementById('editModalSetTag').textContent = `แก้ไข ${editingExamDraft.code}`;
+      document.getElementById('editModalTitle').textContent = editingExamDraft.title;
+      document.getElementById('editExamModal').classList.add('open');
+
+      renderEditForm();
+    }
+
+    function closeEditExamModal() {
+      document.getElementById('editExamModal').classList.remove('open');
+      editingExamDraft = null;
+    }
+
+    function syncDraftFromInputs() {
+      if (!editingExamDraft) return;
+
+      const titleEl = document.getElementById('editExamTitleInput');
+      const descEl = document.getElementById('editExamDescInput');
+      const durationEl = document.getElementById('editExamDurationInput');
+      const passScoreEl = document.getElementById('editExamPassScoreInput');
+
+      if (titleEl) editingExamDraft.title = titleEl.value.trim() || editingExamDraft.title;
+      if (descEl) editingExamDraft.description = descEl.value.trim();
+      if (durationEl) editingExamDraft.durationMinutes = Math.max(1, parseInt(durationEl.value, 10) || 15);
+      if (passScoreEl) {
+        const scoreVal = parseInt(passScoreEl.value, 10);
+        editingExamDraft.passScore = Number.isNaN(scoreVal) ? 80 : Math.min(100, Math.max(1, scoreVal));
+      }
+
+      editingExamDraft.questions.forEach((qObj, qIdx) => {
+        const qInput = document.getElementById(`editQText_${qIdx}`);
+        if (qInput) qObj.q = qInput.value;
+
+        qObj.options = qObj.options.map((opt, optIdx) => {
+          const optInput = document.getElementById(`editQOpt_${qIdx}_${optIdx}`);
+          return optInput ? optInput.value : opt;
+        });
+
+        const checkedRadio = document.querySelector(`input[name="editQAns_${qIdx}"]:checked`);
+        if (checkedRadio) {
+          qObj.answer = parseInt(checkedRadio.value, 10);
+        }
+      });
+    }
+
+    function renderEditForm() {
+      const body = document.getElementById('editModalBody');
+      const qCards = editingExamDraft.questions
+        .map((qObj, qIdx) => {
+          const canDelete = editingExamDraft.questions.length > 1;
+          return `
+            <div class="editor-question-card">
+              <div class="editor-question-top">
+                <strong style="font-size: 14px;">คำถามข้อที่ ${qIdx + 1}</strong>
+                ${
+                  canDelete
+                    ? `<button type="button" class="btn btn-danger-ghost btn-sm" onclick="removeEditQuestion(${qIdx})">ลบข้อนี้</button>`
+                    : `<span class="editor-hint">ต้องมีอย่างน้อย 1 ข้อ</span>`
+                }
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="editQText_${qIdx}">โจทย์คำถาม</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editQText_${qIdx}"
+                  value="${escapeHtml(qObj.q)}"
+                  placeholder="กรอกคำถาม..."
+                />
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">ตัวเลือกคำตอบ (คลิกวงกลมด้านหน้าเพื่อเลือกข้อที่ถูก)</label>
+                ${qObj.options
+                  .map(
+                    (opt, optIdx) => `
+                  <div class="editor-option-row">
+                    <input
+                      type="radio"
+                      name="editQAns_${qIdx}"
+                      value="${optIdx}"
+                      ${qObj.answer === optIdx ? 'checked' : ''}
+                      title="ตั้งเป็นคำตอบที่ถูกต้อง"
+                    />
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="editQOpt_${qIdx}_${optIdx}"
+                      value="${escapeHtml(opt)}"
+                      placeholder="ตัวเลือกที่ ${optIdx + 1}"
+                    />
+                  </div>
+                `
+                  )
+                  .join('')}
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      body.innerHTML = `
+        <div class="form-group">
+          <label class="form-label" for="editExamTitleInput">ชื่อชุดข้อสอบ</label>
+          <input type="text" class="form-control" id="editExamTitleInput" value="${escapeHtml(editingExamDraft.title)}" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="editExamDescInput">คำอธิบาย</label>
+          <textarea class="form-control" id="editExamDescInput">${escapeHtml(editingExamDraft.description)}</textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="editExamDurationInput">เวลาทำข้อสอบ (นาที)</label>
+            <input type="number" min="1" class="form-control" id="editExamDurationInput" value="${editingExamDraft.durationMinutes}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editExamPassScoreInput">เกณฑ์ผ่าน (%)</label>
+            <input type="number" min="1" max="100" class="form-control" id="editExamPassScoreInput" value="${editingExamDraft.passScore}" />
+          </div>
+        </div>
+
+        <div class="editor-questions-header">
+          <h4 style="font-size: 15px; font-weight: 600;">รายการคำถาม (${editingExamDraft.questions.length} ข้อ)</h4>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addEditQuestion()">+ เพิ่มคำถามใหม่</button>
+        </div>
+
+        ${qCards}
+      `;
+    }
+
+    function addEditQuestion() {
+      syncDraftFromInputs();
+      const nextNum = editingExamDraft.questions.length + 1;
+      editingExamDraft.questions.push({
+        q: `คำถามข้อที่ ${nextNum}`,
+        options: ['ตัวเลือกที่ 1', 'ตัวเลือกที่ 2', 'ตัวเลือกที่ 3', 'ตัวเลือกที่ 4'],
+        answer: 0,
+      });
+      renderEditForm();
+    }
+
+    function removeEditQuestion(qIdx) {
+      if (editingExamDraft.questions.length <= 1) return;
+      syncDraftFromInputs();
+      editingExamDraft.questions.splice(qIdx, 1);
+      renderEditForm();
+    }
+
+    function saveEditedExam() {
+      if (!editingExamDraft) return;
+      syncDraftFromInputs();
+
+      const idx = EXAM_SETS.findIndex((e) => e.id === editingExamDraft.id);
+      if (idx !== -1) {
+        EXAM_SETS[idx] = structuredClone(editingExamDraft);
+        saveExamSets();
+        renderAll();
+      }
+
+      closeEditExamModal();
+    }
+
+    function resetDefaultExams() {
+      EXAM_SETS = structuredClone(DEFAULT_EXAM_SETS);
+      saveExamSets();
+      resetMockProgress();
+    }
+
+    // Initialize App
+    initApp();
+  </script>
+</body>
+</html>
